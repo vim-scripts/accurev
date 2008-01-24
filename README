@@ -1,0 +1,11 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2126
+
+This is the AccuRev SCM Integration for Vim.  
+
+AccuRev is a leading Software Configuration Management (SCM) application that enables massive, parallel software development across local and distributed geographic boundaries.  If you develop software in large teams with multiple releases or product variants... AccuRev is for you. See more at http://www.accurev.com.
+
+This plugin provides the ability to perform 20+ AccuRev commands (keep, promote, update, merge, etc) directly within Vim.  
+
+The plugin requires Vim 7.x and supports AccuRev 4.5/4.6/4.7.  Developed on linux (Ubuntu 8.04), it has also been tested on Windows (XPsp2).
+
+The plugin homepage is http://vim.tools4accurev.com
