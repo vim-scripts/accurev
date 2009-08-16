@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:   AccuRev
-" Maintainer:   David P Thomas, <dave@accurev.com>
-" URL:  http://www.accurev.com/vim/syntax/accurev.com
+" Maintainer:   David P Thomas, <davidpthomas@gmail.com>
+" URL: www.vim4accurev.com
 " Last Changed: 2007 Dec 12
 "
 if !exists("main_syntax")
@@ -128,7 +128,16 @@ highlight accurevSearchStatusStranded term=NONE cterm=bold gui=bold ctermfg=Whit
 highlight accurevSearchStatusStale term=NONE cterm=bold gui=bold ctermfg=White ctermbg=Yellow guifg=White guibg=Yellow
 highlight accurevSearchStatusBacked term=NONE cterm=bold gui=bold ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
 
+" ********************
+" Annotate
+" ********************
+highlight accurevAnnotate term=NONE cterm=NONE gui=NONE ctermfg=White ctermbg=Blue guifg=White guibg=Blue
+
+"highlight link accurevSearchNoResults accurevSearchNotify
+
+
 "====================================================
+"
 "
 let b:current_syntax = "accurev"
 

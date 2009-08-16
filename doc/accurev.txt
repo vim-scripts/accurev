@@ -1,18 +1,19 @@
-*accurev.txt*   AccuRev SCM Integration for Vim.  Last change: 2008.01.24
+*accurev.txt*   AccuRev SCM Integration for Vim.   Last change: 2009.08.16
 
                                                               *accurev-overview*
                                                                 *accurev-plugin*
                                                                        *accurev*
-                    AccuRev SCM Integration for Vim
+                       AccuRev Integration for Vim
+                            v1.1 - 2009/08/16
 
-  AccuRev is a leading Software Configuration Management (SCM) application
-  that seamlessly enables massive, parallel software development across local
-  and distributed geographic boundaries.  If you develop software in large
-  teams with multiple releases or product variants... AccuRev is for you.
-  See more at www.accurev.com.
+  AccuRev is a leading Software Configuration & Change Management (SCCM) system
+  that enables massive, parallel software development across local and
+  distributed geographic boundaries.  If you develop software and need to
+  manage multiple releases, product variants, or teams of local or remote
+  developers, then AccuRev is for you.  See more at www.accurev.com.
 
-  AccuRev was once a CLI-only tool and has since included an incredibly powerful
-  visualization GUI called the StreamBrowser.  Yet, for the CLI junkies in the
+  AccuRev was once a CLI-only tool and has since included incredibly powerful
+  visualization tools such as the StreamBrowser.  Yet, for the CLI junkies in the
   crowd, the AccuRev CLI continues to remain a powerful and rich interface for
   pounding out software and sharing changes with the rest of your team.  Most
   Vim users tend to be CLI-users and a tight integration with Vim means your
@@ -20,9 +21,8 @@
   your software can stay as up-to-date as possible, and your productivity
   is ultimately Vim-proved.
 
-  This plugin was originally developed by a single author over the course of
-  a few months, refactored numerous times, and (of course) written entirely
-  with Vim.  Be sure to read more of the interesting |accurev-history|.
+  This plugin continues to be developed out of necessity and is used almost
+  daily by the author.  Be sure to read more of the interesting |accurev-history|.
 
   See the |accurev-maintainer| for contact information.
 
@@ -37,8 +37,10 @@ Contents
   |accurev-requirements|      What you require to use the plugin
   |accurev-installation|      How to install the plugin
   |accurev-tutorial|          3-minute tutorial, for the impatient
+  |accurev-startup|           Startup process
   |accurev-settings|          custom configuration options
   |accurev-troubleshooting|   Fixes for common mistakes
+  |accurev-tips|              Helpful tips
   |accurev-roadmap|           Features coming soon!
   |accurev-history|           Oh the blood, sweat, and tears
   |accurev-author|            Who on earth wrote this plugin!
@@ -55,9 +57,12 @@ Features / Key Mappings
   key combination in Normal Mode (press ESC for Normal Mode).  The
   default leader key is '\' and can be changed in the |accurev-settings|.
 
-      ***[ Authentication ]***
+      ***[ Startup/Authentication ]***
 
+      \+          Load Plugin: Loads AccuRev plugin and prompts for client login
+      \-        Unload Plugin: Unloads AccuRev plugin and allows re-loading
       \i                 Info: Show client/server information
+      \sb      Stream Browser: Launch AccuRev Graphical Stream Browser
       \l                Login: Login to AccuRev with username/password
       \x               Logout: Logout of AccuRev
 
@@ -73,8 +78,9 @@ Features / Key Mappings
       \v             Populate: Populate workspace with current element version
       \e              Element: Show element properties
       \h              History: Display file history for current file
+      \b       Blame/Annotate: Display and highlights per-txn change history
       \!              Defunct: Defunct current file; remove from source control
-      \*            Undefunct: Undefunct current file; reactivate in source control
+      \*            Undefunct: Undefunct current file; requires manual reactivation!
       \rb    Revert-to-Backed: Revert file to backed version
       \rr    Revert-to-Recent: Revert file to most recent version
       \dr    Diff Most-Recent: Diff against most recent version
@@ -111,7 +117,7 @@ Features / Key Mappings
 About
                                                                 *accurev-about*
 
-  The plugin was written because I needed one for myself.  Naturally,
+  This plugin is written entirely out of personal necessity.  Naturally,
   this means that the format for user interaction, direction for buffer splits,
   key mappings, etc. are based largely on personal preference rather than
   democratic consensus or user studies.  That being said, I've used Vim
@@ -134,7 +140,8 @@ About
 Requirements
                                                          *accurev-requirements*
 
-  This plugin requires Vim version 7.0+.  The following 7.x features are used:
+  This plugin requires Vim version 7.0+.  For the curious, the following 7.x
+  features are used:
 
       List          - ordered list of items
       Dictionary    - associative array of items
@@ -146,8 +153,6 @@ Requirements
       has_key()     - test for key entry in a Dictionary
       join()        - join items from a List into a string
 
-      and others methods....
-
   In addition, the following options are required to be compiled into Vim.
   Most standard binary builds of Vim should have them enabled.  To see which
   options your Vim currently has, type ':version'
@@ -158,21 +163,21 @@ Requirements
       +reltime       = needed for showing command timing stats
       +diff          = needed for embedded diffing/merging
       +menu          = needed for console menus (e.g. <F4>)
+      +listcmds      = needed for buffer looping
 
 
 ===============================================================================
 Installation
                                                          *accurev-installation*
 
-  Installing the AccuRev plugin for Vim is easy.
+  Installing the AccuRev SCM plugin for Vim is easy.
   
   NOTE: Be sure you have already installed the AccuRev client
         (www.accurev.com/download) and it is in your PATH.
 
   0. Download - obtain the plugin from any of these sites:
 
-                  * vim4accurev.com         [alpha/beta/stable releases]
-                  * fepus.net/accurev       [alpha/beta/stable releases]
+                  * vim4accurev.com         [stable/beta releases]
                   * vim.org --> scripts     [stable releases]
 
   1. Install - unpack archive _directly_ in your vim runtime path.
@@ -180,7 +185,7 @@ Installation
                      Unix: $HOME/.vim
                   Windows: %HOMEPATH%\vimfiles
 
-               Verify that /plugin/accurev.vim and /doc/accurev.txt exist.
+               Check that /plugin/accurev.vim and /doc/accurev.txt exist.
 
   2. Setup   - Install help documentation by launching Vim and executing:
 
@@ -189,10 +194,11 @@ Installation
 
                Verify the setup by typing ':help accurev' within Vim.
 
-  3. Verify  - Open a file within a local AccuRev workspace.  Login to AccuRev
-               from within Vim using '\l' and providing uname/pword.
-               You should see a statusline starting with AccuRev and showing
-               the file status in AccuRev, i.e. (backed).
+  3. Verify  - Open a file within a local AccuRev workspace.  By default
+               the plugin will load and prompt you to login to accurev
+               (unless you are already logged in).  You should see a
+               statusline starting with AccuRev and showing the file status
+               in AccuRev, e.g. (backed).
 
                NOTE: the plugin loads only if 'accurev' executable is in PATH
 
@@ -206,7 +212,7 @@ Installation
   
   This tutorial assumes the following:
   
-    Computer  - Your computer is ON and running Unix or Windows
+    Computer  - Your computer is ON, running Unix or Windows, and not on fire.
     Software  - The AccuRev client is installed locally (accurev.com/download)
     Path      - 'accurev' client binary is in your PATH
     Plugin    - You have installed ~this~ Vim plugin for AccuRev
@@ -217,25 +223,25 @@ Installation
 
   Start the timer....
 
-    0.  logout of accurev to start fresh, ('$accurev logout')
+    0.  Logout of accurev to start fresh, ('$accurev logout' from CLI)
 
     1.  'cd' to anywhere in your AccuRev workspace
         -- run '$accurev info' on CLI to confirm directory is a workspace
 
-    2.  create a -new- file using vim and add content on *line 1*, save (':w')
-        -- Verify the status bar says "(New File)"
+    2.  Create a -new- file using vim.  You will be prompted to login to AccuRev.
+        -- Verify the default status bar says "[New]"
 
-    3.  login to AccuRev ('\l')
-        -- Verify the status bar says "(external)"
+    3.  Add content on *line 1* then save (':w')
+        -- Verify the accurev status bar says "(external)"
 
     4.  ADD the file to version control ('\a')
-        -- Verify the status bar says "(kept)(member)"
+        -- Verify the accurev status bar says "(kept)(member)"
 
-    5.  make some more changes on *line 1* and *line 2*... but don't save yet!
-        -- Notice the status bar has a [+] sign indicating the buffer is modified
+    5.  Make some more changes on *line 1* and *line 2*... but don't save yet!
+        -- Notice the accurev status bar has a [+] sign indicating the buffer is modified
 
     6.  Now save the file (':w')
-        -- Verify the status bar says "(modified)(member)"
+        -- Verify the accurev status bar says "(modified)(member)"
 
     7.  Diff your changes to the recently added version ('\dr')
         -- Verify that vimdiff shows the differences
@@ -243,29 +249,32 @@ Installation
     8.  Exit diff mode ('\dx')
 
     9.  KEEP your changes ('\k')
-        -- Verify the status bar says "(kept)(member)"
+        -- Verify the accurev status bar says "(kept)(member)"
 
-   10.  make some more changes, and save them (':w'), and KEEP them ('\k')
+   10.  Make some more changes, and save them (':w'), and KEEP them ('\k')
 
-   11.  view the HISTORY ('\h').  Verify previous transactions.  Exit history, (':q')
+   11.  View the HISTORY ('\h').  Verify previous transactions.  Exit history, (':q')
 
-   12.  PROMOTE your file ('\p')
-        -- Verify the status bar says "(backed)"
+   12.  Annotate/blame the file ('\b') to view per-txn history and comments.
+        Navigate to different lines ('j/k') changed above and view each commit
+        comment ('l' or <space>).  Exit annotate, (':q')
 
-   13.  Logout of AccuRev ('\x')
+   13.  PROMOTE your file ('\p')
+        -- Verify the accurev status bar says "(backed)"
+        -- Note: If AccuRev issue tracking is turned on, you'll need to enable it in the plugin.
+
+   14.  Logout of AccuRev ('\x')
         -- Verify that the statusbar no longer says "AccuRev...."
 
-  Done.  Congratulations! You just added a new file to version control, 
-         reviewed multiple changes with inline diff, created and viewed
-         file history, and finally promoted and shared it with others.
+  Finished!.  Congratulations! You just added a new file to version control, 
+  reviewed multiple changes with inline diff, created and viewed file history,
+  and finally promoted and shared it with others.
 
-         Tip: Promote multiple files at once.
-              Lets say you've been adding, changing, keeping tons of files.
-              Use group-select to promote them all!
-
-              Replace step #10 with "Group-promote files ('mp')".
-              Use h,j,k,l to navigate and <spacebar> to select.  After choosing
-              your elements, use (:wq) to quite and promote.
+  Tip: Lets promote multiple pending files all at once.  Lets say you've been
+  adding, changing, keeping a bunch of files.  Use multi-promote to promote
+  them all in a single transaction!  Replace step #10 with "Multi-promote
+  files ('mp')".  Use h,j,k,l to navigate and <spacebar> to select.  After
+  choosing your elements, use (:wq) to quite and promote.
 
   Now what?
 
@@ -278,61 +287,100 @@ Installation
 
 
 ===============================================================================
+Startup
+                                                               *accurev-startup*
+
+Vim automatically loads any plugin files located in its plugin path directories.
+By default, the accurev plugin is fully enabled at startup and prompts you
+to login if necessary.  The plugin is loaded for each buffer, individually.
+
+If you frequently work on a disconnected network (e.g. airplane mode) or over
+a very-slow network connection and don't want to wait for vim to contact
+the [unavailable/slow] AccuRev server, you may want to override the default
+setting by disabling the plugin on startup.  To enable the plugin on-demand
+within vim, a simple key mapping is provided (e.g. '\+').  The plugin can
+also be disabled within vim as well (e.g. '\-')
+
+===============================================================================
 Settings
                                                              *accurev-settings*
 
-  A static plugin is nothing more than a pet rock.  This plugin is _no_ pet rock.
-  Of course you can customze this plugin!  There are a few variables at the top
-  of the script that allow you to control the behavior of the plugin.  Look
-  for the section titled "User Customizations".  The variables are
-  described here:
+  Of course you can customze this plugin!  There are a few variables at
+  the top of the script that allow you to control the behavior of the
+  plugin.  Look for the section titled "User Customizations".
+  The variables are described in detail below.
 
   Tip: the accurev.vim script uses extensive |folding|. Be sure to
        "set foldmethod=marker" to more easily navigate the entire script.
        (Use 'zM' to fold the entire script; then 'zo' to open a given fold)
 
-  s:mapleader = "..."
+  s:mapleader = "xxx"
 
       Define the keybinding to used to initiate accurev plugin commands.
-      Default value is '\'.  e.g. add --> \a
+      Default value is '\'.  e.g. "accurev add" is "\a" keystroke.
 
-  s:always_show_status = [s:true|s:false]
-    
-      Show plugin loading and status regardless of the current working directory
-      being an AccuRev workspace.  Setting this value to false will only show
-      AccuRev status information in the statusline when the user is both logged in
-      and working in an AccuRev workspace.  Mainly useful for debugging.
-      Note: this will display and accurev-specific message for *EVERY* vim session
+                                                      *accurev-settings-startup*
+  s:load_on_startup = [s:true|s:false]
+
+      Determines if the AccuRev plugin is loaded during vim startup.  If enabled,
+      the plugin will auto-detect a workspace based on current working directory
+      and provide status for the currently loaded file.  Default is s:true.
+
+      Ths flag does NOT prevent bootstrapping which is required for user driven
+      load/unload cycles.  Key mapping is available to enable/disable within a
+      vim session.  Most people will load on startup.  Disabling is only useful
+      for situations such as:
+
+          * accurev not always available (e.g. working on an airplane)
+          * slow network causes realtime AccuRev access to slow down vim status refreshes 
+
+  s:graphical_merge_enabled = [s:true|s:false]
+   
+      Turn on/off launching of AccuRev's graphical merge tool if a merge
+      has conflicts and requires human resolution.  If enabled, the
+      AccuRev merge tool will be launched.  If disabled, all merges
+      must be performed manually outside of vim.  The only practical
+      reason to disable is if you are not in a graphical development
+      environment or simply prefer traditional text-based merging.
+      Default is s:true.
+
+  s:show_status_messages = [s:true|s:false]
+   
+      Turn on/off minimally verbose status messages for the curious user.
+      Default is s:false.
 
   s:plugin_debugging = [s:true|s:false]
     
       Turn on/off plugin debugging.  This feature is designed to display
-      minimal critical information during runtime.
+      minimal critical information during runtime.  Default is s:false.
 
   s:record_command_history = [s:true|s:false]
 
       With this flag enabled, the plugin will record all AccuRev CLI calls.
       The history of calls can be viewed in the Command History window ('\?').
       The command history is erased with an AccuRev Logout or when Vim exits.
+      Default is s:true.
 
   s:verbose_command_history = [s:true|s:false]
 
       With this flag enabled, the return output from each AccuRev CLI call
       is also recorded.  This is only used when recording is enabled (above).
       Be careful - the CLI history is stored in buffer memory and xxxx output is stored in buffer memory
+      Default is s:false.
 
   s:promote_comment_prefix = "..."
 
       This is a prefix for what is displayed in the promote comment
       for multi-select promote.  Use it to provide a template.
 
-  s:enable_issue_promote = s:true
+                                         *accurev-settings-enable-issue-promote*
+  s:enable_issue_promote = [s:true|s:false]
 
       This flag determines if the user will be prompted to enter an issue #
       during a promote.   This prompt is global and not specific to any stream
       hierarchy (unlike the CP trigger rules).  For this fact, if this flag
       is enabled, and no issue is necessary, simply press Enter and specifying
-      no issue will succeed.
+      no issue will succeed.  Default is s:false.
 
 ===============================================================================
 Troubleshooting
@@ -342,8 +390,12 @@ Troubleshooting
    
     |accurev-not-installed|  AccuRev client not installed
         |accurev-not-found|  AccuRev client not found in PATH
+      |accurev-unavailable|  AccuRev server not available
+ |accurev-not-in-workspace|  Not in a workspace when plugin loads
+  |accurev-promote-hanging|  Promote operation hanging at 1/3 finished
       |accurev-key-overlap|  Key bindings conflict with another plugin
           |accurev-no-help|  AccuRev help documentation not loading
+       |plugin-not-loading|  Plugin is not loading when editing in a workspace
 
   +----------------------------------------------------------------------------+
                                                          *accurev-not-installed*
@@ -376,10 +428,69 @@ Troubleshooting
              Windows: $set PATH=%PATH%;C:\Program Files\AccuRev\bin
                       # set in system properties under environment variables
 
-	   NOTE: For Windows, you may need to set the PATH as a USER or SYSTEM
+     NOTE: For Windows, you may need to set the PATH as a USER or SYSTEM
                  variable in order for the PATH to be visible to the shell.
                       # Start --> Control Panel --> 
-			  System --> Advanced --> Environment Variables
+        System --> Advanced --> Environment Variables
+
+
+  +----------------------------------------------------------------------------+
+                                                           *accurev-unavailable*
+   Symptom: AccuRev server unavailable.
+  Solution: Check connectivity to the AccuRev server.
+
+            $ accurev info
+
+           If you expect the AccuRev server to be available, contact your
+           AccuRev administrator.
+
+           If the server is legitimately unavailable (i.e. working on airplane),
+           configure plugin to disable login on startup.
+
+           See |accurev-settings| and |accurev-settings-startup|
+
+  +----------------------------------------------------------------------------+
+                                                      *accurev-not-in-workspace*
+   Symptom: Not in a workspace when plugin loads.
+  Solution: Verify that the file's directory is within a local directory
+            managed by an AccuRev workspace.
+
+           Did you create an AccuRev workspace already?  If not, an
+           AccuRev workspace must first be created to 'checkout' the
+           source code.  See '$ accurev help mkws' from the CLI.
+           
+           If you did create a workspace, first check the workspace status.
+           From the CLI, cd to the file's directory and run the accurev
+           'info' command.  This command will determine if the current
+           directory is associated with a workspace.
+
+            $ accurev info
+
+           For a valid workspace, the info output will include values for
+           'Workspace/ref', 'Basis', and 'Top' confirming a valid workspace.
+           Otherwise, an error indicating 'You are not in a directory associated
+           with a workspace' will be displayed.
+
+           If you are not in a workspace but are absolutely sure you created
+           a workspace, look at the list of your workspaces known by the
+           AccuRev server.  Run '$ accurev show wspaces' to list all workspaces.
+           This list will also include the full absolute path to the workspace
+           on your machine.  Are you on the right machine?  To move a workspace
+           from another machine or directory, see '$ accurev help chws'.
+
+           If you are still sure you created a workspace and it is not in
+           the list, look at the removed/hidden workspaces as well.
+           Run '$ accurev show -fi wspaces'.  If your workspace is not
+           in that list, perhaps you are on the wrong AccuRev server?
+           The output from '$ accurev info' will show the server name.
+
+  +----------------------------------------------------------------------------+
+                                                       *accurev-promote-hanging*
+   Symptom: Promoting a file hangs with the progress bar showing 1/3 complete.
+  Solution: AccuRev may be prompting to enter an issue #.  Currently,
+            the plugin supports entering issues but requires setting
+            a configuration property.  By default, this is disabled.
+            See |accurev-settings-enable-issue-promote|.
 
   +----------------------------------------------------------------------------+
                                                            *accurev-key-overlap*
@@ -416,7 +527,56 @@ Troubleshooting
             Verify that the help docs are available by launching vim then typing
             ":help accurev".
 
-            
+  +----------------------------------------------------------------------------+
+                                                            *plugin-not-loading*
+   Symptom: Plugin is not loading when editing in a workspace
+  Solution: First, verify that the plugin is installed.
+
+                     Unix: $HOME/.vim/plugin/accurev.vim
+                  Windows: %HOMEPATH%\vimfiles\plugin\accurev.vim
+
+            Second, verify that the working directory is truely an AccuRev
+            workspace.  Type "$accurev info" on the command line.  If the message
+            "You are in in a directory associated with a workspace" is shown,
+            this means the vim plugin is not loading because the edited file is
+            not in a workspace.  An AccuRev workspace is needed for the plugin.
+
+            Third, check the "load on startup" property in the
+            plugin/accurev.vim file.  if 's:load_on_startup' is set to 's:false',
+            the plugin is configured to be  manually loaded.  The default
+            keymapping is '/+' for loading and '/-' for unloading.
+
+            Fourth, with the file open in vim, type ":let" and look for the 
+            variable "b:accurev_attributes".  The presence of this variable
+            indicates that the plugin was found and bootstrapped.  Try to
+            enable to AccuRev from within Vim by typing '\+'.  Once enabled
+            and logged in, the status bar will display the AccuRev status for
+            the file so long as it is in an AccuRev workspace.  If logging in
+            shows no status bar, the file is not in an AccuRev workspace.
+ 
+===============================================================================
+Tips
+                                                                 *accurev-tips*
+
+  Tip #1 - Dealing with a Slow Network or Unavailable AccuRev server
+  
+      Sometimes over a slow network or VPN, the frequent file status checks
+      and refreshing can make the plugin feel sluggish.  In this case, you
+      can enable the plugin when you need to perform version control.  The
+      plugin can be configured to load on startup for every buffer.  This can
+      be controlled with the variable s:load_on_startup located in the
+      script.  Optionally, the plugin can be enabled/disabled on-demand
+      using \- or \+ respectively.
+
+  Tip #2 - Viewing file history.
+
+      This plugin provides access to element history by either viewing
+      the log of keep transactions or viewing per-line change history
+      with annotate/blame.  Use '\h' to view the full keep transaction
+      history for the current file.  Use '\b' to annotate (blame) the
+      file and view commit comments for the most recent changes to a
+      highlighted ('l') line.
+
 ===============================================================================
 Plugin RoadMap
                                                               *accurev-roadmap*
@@ -433,14 +593,18 @@ Plugin RoadMap
 
 
 ===============================================================================
+                                                            *chester-copperpot*
+You Goonie!
+
+===============================================================================
 Plugin Development History
                                                               *accurev-history*
 
   Why a Vim plugin for AccuRev?   I wrote this plugin for three reasons,
-  besides the fact that one didn't exist and I wanted one for myself.
+  besides the fact that one didn't exist and I needed one for myself.
 
     First,
-          Vim is the most sophisticated and powerful text editors... ever.
+          Vim is the most sophisticated and powerful text editor... ever.
     Second,
           AccuRev is the most sophisticated and powerful SCM tool... ever.
     Third,
@@ -459,6 +623,12 @@ Plugin Development History
   Having lots of small functions building on each other turned out to be key
   for developing a complex application.  Theory and practice collide!
 
+  Developing this plugin had many challenges.  While the vimscript language
+  is fairly powerful, it is very incomplete compared to the community of
+  contemporary languages.  For example, lack of a unit test framework and
+  xml parsing library have been the most difficult obstacles.  Computers are
+  computers so solutions are abound, but effort is certainly required.
+
   See also |accurev-author|.
 
 
@@ -466,19 +636,22 @@ Plugin Development History
   --------------------
   I developed most of the plugin on a dual-boot Intel Penium M 2.0Ghz/1Gb RAM
   with the following operating systems.  Depending on my mood or need to
-  preserve batter power (windows seemed better!?), I would toggle between the
+  preserve battery power (windows seemed better!?), I would toggle between the
   OS's for development.
 
     * Ubuntu 6.10, Vim 7.0
     * Windows XP 2002/SP2, Vim 7.0
 
+  Version 1.1 was developed with the following platform:
+    * Ubuntu 8.0.4, Vim 7.1.138      [development + testing]
+    * Windows XP 2002/SP2, Vim 7.0   [testing]
 
   Development Log
   ---------------
 
   Most of the plugin development happened while I was traveling; either
   waiting at an airport, 30,000+ feet above sea level, or in a hotel room.
-  I also spent spare cycles during evenings/weekends at home in Santa Cruz.
+  I also spent spare cycles during evenings/weekends at home in Santa Cruz, CA.
 
    2007 Jun 24 * Santa Cruz; thoughts; docs & folding; buffer mgmt prototyping; reviewed plugins for cvs/svn/svk/pvcs/p4/clearcase
    2007 Jun 23 * Santa Cruz; thoughts; understanding mappings; user input; general flow
@@ -550,12 +723,35 @@ Plugin Development History
    2007 Dec 07 * 38,000ft above Boston, MA enroute to Chicago, IL: multi status-line update for group promote; added element_path attr
    2007 Dec 10 * 38,000ft above Chicago, IL enroute to San Francisco, CA: research syntax HL; syntax HL info/update; -o/-O multi-file startup support; status refresh on gui focus; login messaging
    2007 Dec 11 * Santa Cruz: syntax HL info/history/update/element/status/search; blog post
-   2007 Jan 19 * Santa Cruz: promote error handling for merges; pop for missing files; synctime messaging
-   2007 Jan 19 * final 1.0 linux testing: vim 7.x / linux (ubuntu 7.10) / accurev 4.5, 4.5.4, 4.6.0b
-   2007 Jan 20 * final 1.0 windows testing: vim 7.x / Windows XP / accurev 4.5, 4.5.4, 4.6.0b
-   2007 Jan 20 * 1.0 Release! submitted to vim.org and vim4accurev.com
-   2007 Jan 24 * 1.0.1 Release! - added apache 2.0 license
-
+   2008 Jan 19 * Santa Cruz: promote error handling for merges; pop for missing files; synctime messaging
+   2008 Jan 19 * final 1.0 linux testing: vim 7.x / linux (ubuntu 7.10) / accurev 4.5, 4.5.4, 4.6.0b
+   2008 Jan 20 * final 1.0 windows testing: vim 7.x / Windows XP / accurev 4.5, 4.5.4, 4.6.0b
+   2008 Jan 20 * 1.0 Release! submitted to vim.org and vim4accurev.com
+   2008 Jan 24 * 1.0.1 Release! - added apache 2.0 license
+   << No Defects reported in 2008! >>
+   2009 Jan 04 * 31,000ft enroute to Chicago, IL from San Jose, CA: load/unload on startup with mappings
+   2009 Jan 07 * Bedford MA, hotel: refactored property functions; init loading
+   2009 Jan 10 * 34,000ft enroute to Chicago, IL from Boston, MA: refactored init/login
+   2009 Jan 10 * O'Hare Terminal 3; 4hr snow delay. refactored init/login/messaging/error handling
+   2009 Jan 10 * 34,000ft enroute to Phoenix, AZ from Chicago, IL: completely refactored load/init
+   2009 Jan 29 * Bellevue WA, hotel: planning load/init strategy
+   2009 Jan 30 * 34,000ft enroute to San Francisco, CA from Seattle, WA: refactoring load/init
+   2009 Apr 07 * 32,000ft enroute to Salt Lake City, UT from Phoenix, AZ: refactoring load/init
+   2009 Apr 12 * Salt Lake City, UT Int'l Airport: refactoring load/init
+   2009 Apr 12 * 32,000ft enroute to Reno, NV via Salt Lake City, UT (SJC connection): load/init validation & testing
+   2009 Apr 12 * 32,000ft enroute to San Jose, CA via Reno, NV: load/init validation & testing
+   2009 May 02 * enroute to San Jose, CA from Los Angeles, CA: load/init validation
+   2009 Jul 27 * 35,000ft enroute to Seattle, WA from San Jose, CA: load/unload key mapping
+   2009 Jul 29 * 37,000ft enroute to San Jose, CA from Seattle, WA: doc tips section
+   2009 Aug 03 * Santa Cruz CA: fixed client binary detection; finished load/init validation; init testing
+   2009 Aug 05 * Santa Cruz CA: finished enable/disable plugin; updated docs; investigating annotate
+   2009 Aug 06 * 39,000ft enroute to Phoenix, AZ from San Jose, CA: disable plugin on diff buffer; added annotate; docs
+   2009 Aug 07 * Phoenix AZ: implement annotate mapping & buffer
+   2009 Aug 08 * Phoenix AZ: implement annotate highlighting
+   2009 Aug 09 * 34,000ft enroute to San Jose, CA from Phoenix, AZ: implement annotate per-line history display
+   2009 Aug 10 * Santa Cruz: stream browser launch; testing on Windows
+   2009 Aug 16 * Santa Cruz: finished per-buffer graphical menus with enable/disable & login/logout support
+   2009 Aug 16 * 1.1 released!
 
 ===============================================================================
 Plugin Author/Maintainer
@@ -565,25 +761,23 @@ Plugin Author/Maintainer
   David P Thomas, <davidpthomas@gmail.com>
                   <dave@accurev.com>
 
-     personal blog: www.fepus.net
+     personal blog: www.davidpthomas.name
          tech blog: www.daveonscm.com
                     blog.accurev.com
 
     * Vim user since 1997 (pico before that ;)
     * currently a Senior Systems Engineer at AccuRev (2006-present)
     * formerly a Senior Software Engineer at Orbitz.com (2001-2006)
-    * numbers juggler 5 & 7 balls
+    * originally a web consultant with ClassifiedVentures (1999-2001)
+    * numbers juggler, 5 & 7 balls
     * snowboarder with instructor certification (CASI / Whistler)
     * Unix over Windows; Vim over emacs; Ruby over Java; 95wpm.
-    * father-to-be!
-    * living in Santa Cruz, CA
+    * father of one inquisitive young son who loves skateboarding
+      and pointing at green screen terms
+    * living, jogging, and mountain biking in Santa Cruz, CA
 
   Feel free to contact me with feedback/questions/comments!
 
-                                                    -- dave
-
-===============================================================================
-                                                            *chester-copperpot*
-You Goonie!
+                                  -- dave, davidpthomas@gmail.com
 
 

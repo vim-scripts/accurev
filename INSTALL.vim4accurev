@@ -9,8 +9,7 @@ Installing the AccuRev plugin for Vim is easy.
   0. Download - obtain the plugin from any of these sites:
 
                   * vim.org --> scripts     [stable releases]
-                  * vim4accurev.com         [alpha/beta/stable releases]
-                  * fepus.net/accurev       [alpha/beta/stable releases]
+                  * vim4accurev.com         [stable/beta releases]
 
   1. Install - unpack archive _directly_ in your vim runtime path.
 
@@ -18,7 +17,7 @@ Installing the AccuRev plugin for Vim is easy.
                   Windows: %HOMEPATH%\vimfiles
 
                e.g. cd $HOME/.vim
-                    tar -xvzf vim4accurev-1.0.tgz
+                    tar -xvzf vim4accurev-1.1.tgz
                     Verify that /plugin/accurev.vim and /doc/accurev.txt
                     exist.
 
