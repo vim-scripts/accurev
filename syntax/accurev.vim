@@ -1,8 +1,7 @@
-" Vim syntax file
-" Language:   AccuRev
+" Vim syntax file for AccuRev
+"
 " Maintainer:   David P Thomas, <davidpthomas@gmail.com>
-" URL: www.vim4accurev.com
-" Last Changed: 2007 Dec 12
+" Last Changed: Mon Aug 17 13:23:55 PDT 2009
 "
 if !exists("main_syntax")
   if version < 600

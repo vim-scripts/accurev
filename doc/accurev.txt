@@ -1,28 +1,29 @@
-*accurev.txt*   AccuRev SCM Integration for Vim.   Last change: 2009.08.16
+*accurev.txt*   AccuRev SCM Integration for Vim   Last change: 2009.08.18
 
                                                               *accurev-overview*
                                                                 *accurev-plugin*
                                                                        *accurev*
                        AccuRev Integration for Vim
-                            v1.1 - 2009/08/16
+                            v1.1.1 - 2009/08/18
 
-  AccuRev is a leading Software Configuration & Change Management (SCCM) system
-  that enables massive, parallel software development across local and
-  distributed geographic boundaries.  If you develop software and need to
-  manage multiple releases, product variants, or teams of local or remote
-  developers, then AccuRev is for you.  See more at www.accurev.com.
+  AccuRev is a leading Software Configuration & Change Management (SCCM)
+  system that enables massive, parallel software development across local
+  and distributed geographic boundaries.  If you develop software and need
+  to manage multiple releases, product variants, or teams of local or
+  remote developers, then AccuRev is for you.  See more at www.accurev.com.
 
   AccuRev was once a CLI-only tool and has since included incredibly powerful
   visualization tools such as the StreamBrowser.  Yet, for the CLI junkies in the
-  crowd, the AccuRev CLI continues to remain a powerful and rich interface for
-  pounding out software and sharing changes with the rest of your team.  Most
-  Vim users tend to be CLI-users and a tight integration with Vim means your
-  fingers don't leave the keyboard, you can share your changes ealier,
+  crowd, the AccuRev CLI continues to remain a powerful and rich interface
+  for pounding out software and sharing changes with the rest of your team.
+  Most Vim users tend to be CLI-users and a tight integration with Vim means
+  your fingers don't leave the keyboard, you can share your changes ealier,
   your software can stay as up-to-date as possible, and your productivity
   is ultimately Vim-proved.
 
-  This plugin continues to be developed out of necessity and is used almost
-  daily by the author.  Be sure to read more of the interesting |accurev-history|.
+  This plugin continues to be developed out of necessity and is used
+  almost daily by the author.  Be sure to read more of the
+  interesting |accurev-history|.
 
   See the |accurev-maintainer| for contact information.
 
@@ -342,6 +343,12 @@ Settings
       must be performed manually outside of vim.  The only practical
       reason to disable is if you are not in a graphical development
       environment or simply prefer traditional text-based merging.
+      Default is s:true.
+
+  s:require_comments = [s:true|s:false]
+   
+      Flag to require non-empty comments during any AccuRev command that
+      accepts a user-provided comment including add, keep, promote, etc
       Default is s:true.
 
   s:show_status_messages = [s:true|s:false]
@@ -752,6 +759,9 @@ Plugin Development History
    2009 Aug 10 * Santa Cruz: stream browser launch; testing on Windows
    2009 Aug 16 * Santa Cruz: finished per-buffer graphical menus with enable/disable & login/logout support
    2009 Aug 16 * 1.1 released!
+   2009 Aug 17 * windows patch: normalize pathnames to lowercase for str comparison (Thanks Charles Bates)
+   2009 Aug 18 * added 'comment required' property and logic for add/keep/promote/defunct/anchor
+   2009 Aug 18 * 1.1.1 released!
 
 ===============================================================================
 Plugin Author/Maintainer

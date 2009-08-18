@@ -3,7 +3,11 @@ AccuRev Integration for Vim - Release Notes
 
 See ':help accurev-history' for a detailed log.
 
-Aug XX, 2009 - 1.1
+Aug 18, 2009 - 1.1.1
+               * windows users only: patch to normalize (lowercase) paths for str comparison
+               * support requiring comments; user defined property flag
+
+Aug 16, 2009 - 1.1.0
                * on demand plugin enable/disable within vim session
                * per-buffer graphical menus
                * annotate/blame with highlight and hist comments
@@ -12,11 +16,16 @@ Aug XX, 2009 - 1.1
                * launch stream browser
                * launch graphical merge
                * fix: removed 'lcd'
+
 Jan 24, 2008 - 1.0.1 Release
                * added apache 2.0 license
+
 Jan 20, 2008 - 1.0 Release
                * supports Vim 7.x, AccuRev 4.5.x, 4.6.x
                * Tested on Ubuntu 7.10, Windows XP
+
 Nov 13, 2007 - 1.0b Beta Release
+
 Sep 21, 2007 - 1.0a Alpha Release
+
 Jun 24, 2007 - initial development

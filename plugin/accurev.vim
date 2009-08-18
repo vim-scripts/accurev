@@ -58,8 +58,8 @@ if v:version < 700 | echomsg 'AccuRev: Plugin requires Vim 7.0 or greater' | fin
 " Sub-Section: Script-Scoped Global Variables {{{2
 
 " Version of this plugin
-let s:accurev_plugin_version = "1.1"
-let s:accurev_plugin_date = "2009.08.16"
+let s:accurev_plugin_version = "1.1.1"
+let s:accurev_plugin_date = "2009.08.18"
 let s:accurev_plugin_release = s:accurev_plugin_version . " " . s:accurev_plugin_date
 
 " boolean variable aliases used in conditionals and function returns
@@ -86,6 +86,9 @@ let s:load_on_startup = s:true "[s:true|s:false]
 
 " flag to launch graphical merge on conflict; otherwise external, manual merge required
 let s:graphical_merge_enabled = s:true "[s:true|s:false]
+
+" flag to require non-empty comments
+let s:require_comments = s:true
 
 " show informational status messages during processing; minimally verbose
 " - ideal for the curious user
@@ -950,6 +953,12 @@ function! s:Add(...)
     let l:comment = s:Input_SingleLine('Add Comment [CTRL-c cancels]: ')
   endif
 
+  if s:IsEmptyComment(l:comment)
+    call s:DisplayErrorWithPrompt("Comment required.  Aborting.")
+    redraw!
+    return
+  endif
+
   call s:RecordActionBegin('add')
 
   " *******************************************************
@@ -1065,6 +1074,12 @@ function! s:Keep(...)
     let l:comment = s:Input_SingleLine('Keep Comment [CTRL-c cancels]: ')
   endif
 
+  if s:IsEmptyComment(l:comment)
+    call s:DisplayErrorWithPrompt("Comment required.  Aborting.")
+    redraw!
+    return
+  endif
+
   call s:RecordActionBegin('keep')
 
   try
@@ -1170,6 +1185,12 @@ function! s:Anchor(...)
     let l:comment = a:1
   else " prompt user for comment
     let l:comment = s:Input_SingleLine('Anchor Comment [CTRL-c cancels]: ')
+  endif
+
+  if s:IsEmptyComment(l:comment)
+    call s:DisplayErrorWithPrompt("Comment required.  Aborting.")
+    redraw!
+    return
   endif
 
   call s:RecordActionBegin('anchor')
@@ -1364,6 +1385,12 @@ function! s:Promote(type,...)
     let l:comment = a:1
   else " prompt user for comment
     let l:comment = s:Input_SingleLine('Promote Comment [CTRL-c cancels]: ')
+  endif
+
+  if s:IsEmptyComment(l:comment)
+    call s:DisplayErrorWithPrompt("Comment required.  Aborting.")
+    redraw!
+    return
   endif
 
   " get issue # to promote to
@@ -1831,6 +1858,12 @@ function! s:Defunct(...)
     let l:comment = a:1
   else " prompt user for comment
     let l:comment = s:Input_SingleLine('Defunct Comment [CTRL-c cancels]: ')
+  endif
+
+  if s:IsEmptyComment(l:comment)
+    call s:DisplayErrorWithPrompt("Comment required.  Aborting.")
+    redraw!
+    return
   endif
 
   call s:RecordActionBegin('defunct')
@@ -2325,7 +2358,6 @@ function! s:EnableGuiMenus()
     call s:LoadAuthMenuMappings()
   endif
 endfunction "}}}
-
 
 " Function: DisableAccuRevMenus {{{2
 " Description: Disables the accurev menus if the plugin is loaded in the buffer.
@@ -2853,6 +2885,19 @@ endfunction "}}}
 function! s:IsRunningGui()
   return has("menu") || has ("gui_running")
 endfunction "}}}
+
+" Function: IsEmptyComment {{{2
+" Description: Validate the emptiness incomming comment.
+" Return: true if empty; false otherwise
+function! s:IsEmptyComment(comment)
+  if s:RequireComments()
+    if empty(a:comment) || match(a:comment, '^\s\+$') == 0
+      return s:true
+    endif
+  endif
+  return s:false
+endfunction "}}}
+
 
 " }}}
 
@@ -4577,6 +4622,13 @@ function! s:GraphicalMergeEnabled()
   return s:graphical_merge_enabled
 endfunction " }}}
 
+" Function: RequireComments {{{3
+" Description: Property method that indicates if non-empty comments are required.
+function! s:RequireComments()
+  return s:require_comments
+endfunction " }}}
+
+
 
 "2}}}
 "
@@ -4630,7 +4682,9 @@ function! s:IsAbsolutePath(path)
 endfunction "}}}
 
 " Function: NormalizeFilename {{{3
-" Description: Convert given pathname into a cononical for for comparing across platforms
+" Description: Convert given pathname into a cononical form
+"              for comparing across platforms.  Transforms filename
+"              into abs path, all lowercase, single-slashes, unc capable.
 " Parameter: filename as String to normalize
 " Return: new filename in canonical form
 function! s:NormalizeFilename(fileName)
@@ -4669,13 +4723,18 @@ function! s:NormalizeFilename(fileName)
   endif
 
   if s:OnWindows()
+    " force drive letter to lowercase
     let fileName=substitute(fileName, '^[A-Z]:', '\L&', '')
 
-    " Add drive letter if missing (just in case).
+    " Add lowercase drive letter if missing (just in case).
     if !uncPath && match(fileName, '^/') == 0
       let curDrive = substitute(getcwd(), '^\([a-zA-Z]:\).*$', '\L\1', '')
       let fileName = curDrive . fileName
     endif
+
+    " lower case entire path
+    let fileName=substitute(fileName, '[A-Z]', '\L&', 'g')
+
   endif
   return fileName
 endfunction "}}}
